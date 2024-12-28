@@ -1,0 +1,9 @@
+sentence-transformers>=2.2.2
+pymilvus==2.2.8
+pyyaml>=6.0.1
+watchdog>=3.0.0
+prometheus-client>=0.17.1
+torch>=2.0.0
+transformers>=4.30.0
+mlflow==2.19.0
+minio>=7.1.15
