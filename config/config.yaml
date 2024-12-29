@@ -13,6 +13,23 @@ document_processor:
   chunk_overlap: 50
   supported_formats: ["pdf", "txt", "docx"]
 
+llm:
+  provider: "openai"  # or "anthropic", "huggingface"
+  model_name: "gpt-3.5-turbo"
+  temperature: 0.7
+  max_tokens: 500
+
+rag:
+  retriever:
+    search_type: "mmr"  # or "similarity"
+    k: 4  # number of documents to retrieve
+    fetch_k: 20  # number of documents to fetch before filtering
+    lambda_mult: 0.5  # diversity factor for MMR
+  
+  chain:
+    type: "stuff"  # or "map_reduce", "refine", "map_rerank"
+    verbose: true
+
 monitoring:
   log_level: "INFO"
   metrics_port: 8000
