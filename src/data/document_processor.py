@@ -1,13 +1,10 @@
 import os
 from typing import List, Dict
 import yaml
-import logging
 from dotenv import load_dotenv
 
 load_dotenv()
 
-import torch
-from transformers import AutoTokenizer, AutoModel
 from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from llama_parse import LlamaParse

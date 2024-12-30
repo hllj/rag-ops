@@ -12,5 +12,7 @@ openai>=0.27.0
 fastapi>=0.68.0
 uvicorn>=0.15.0
 pydantic>=1.8.2
+langchain-openai
+langchain-community
 llama-parse
 python-dotenv

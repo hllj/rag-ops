@@ -1,5 +1,7 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.chains import ConversationalRetrievalChain
+from langchain_openai import ChatOpenAI
+from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
+import langchain.chat_models
+import langchain.chat_models.openai
 from langchain.memory import ConversationBufferMemory
 from .prompt_templates import QA_PROMPT, CONDENSE_QUESTION_PROMPT
 from .retrievers import DocumentRetriever

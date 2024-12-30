@@ -18,7 +18,7 @@ def main():
     # Start ingestion pipeline
     pipeline = DocumentIngestionPipeline(
         config_path='config/config.yaml',
-        watch_directory='data/input'
+        watch_directory='documents/'
     )
     
     # Start monitoring server
