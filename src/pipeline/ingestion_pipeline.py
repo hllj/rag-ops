@@ -47,8 +47,12 @@ class DocumentIngestionPipeline(FileSystemEventHandler):
                 
                 # Process document
                 with document_processing_time.time():
-                    with open(file_path, 'r') as f:
-                        content = f.read()
+                    with open(file_path, 'rb') as f:
+                        file_bytes = f.read()
+                        extra_info = {
+                            "file_name": os.path.basename(file_path),
+                        }
+                        content = self.document_processor.parse_document(bytes=file_bytes, extra_info=extra_info)
                     
                     processed_chunks = self.document_processor.process_document(content)
                 
