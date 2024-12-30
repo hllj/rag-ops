@@ -1,5 +1,3 @@
-from langchain.retrievers import ParentDocumentRetriever
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Milvus
 from langchain.embeddings import HuggingFaceEmbeddings
 import yaml
@@ -22,13 +20,10 @@ class DocumentRetriever:
             connection_args={
                 "host": self.config['vector_store']['host'],
                 "port": self.config['vector_store']['port']
-            }
-        )
-        
-        # Initialize text splitter for parent retriever
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=self.config['document_processor']['chunk_size'],
-            chunk_overlap=self.config['document_processor']['chunk_overlap']
+            },
+            primary_field="id",
+            text_field="content",
+            vector_field="embedding",
         )
         
         # Initialize retriever

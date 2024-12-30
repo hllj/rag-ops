@@ -18,6 +18,7 @@ class RAGChain:
         self.llm = self._initialize_llm()
         self.memory = ConversationBufferMemory(
             memory_key="chat_history",
+            output_key="answer",
             return_messages=True
         )
         
@@ -42,7 +43,7 @@ class RAGChain:
             memory=self.memory,
             return_source_documents=True,
             combine_docs_chain_kwargs={"prompt": QA_PROMPT},
-            question_generator_chain_kwargs={"prompt": CONDENSE_QUESTION_PROMPT},
+            condense_question_prompt=CONDENSE_QUESTION_PROMPT,
             verbose=self.config['rag']['chain']['verbose']
         )
         
@@ -53,9 +54,12 @@ class RAGChain:
             
         try:
             response = self.chain({"question": question, "chat_history": chat_history})
+            # Extract answer and source documents explicitly
+            answer = response.get("answer", "No answer found.")
+            source_documents = response.get("source_documents", [])
             return {
-                "answer": response["answer"],
-                "source_documents": response["source_documents"],
+                "answer": answer,
+                "source_documents": source_documents,
                 "chat_history": self.memory.chat_memory.messages
             }
         except Exception as e:

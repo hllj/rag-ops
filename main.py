@@ -11,21 +11,6 @@ def main():
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     
-    # Load configuration
-    with open('config/config.yaml', 'r') as f:
-        config = yaml.safe_load(f)
-    
-    # Start ingestion pipeline
-    pipeline = DocumentIngestionPipeline(
-        config_path='config/config.yaml',
-        watch_directory='documents/'
-    )
-    
-    # Start monitoring server
-    start_http_server(config['monitoring']['metrics_port'])
-    
-    pipeline.run()
-    
     # Initialize RAG chain
     rag_chain = RAGChain('config/config.yaml')
     
@@ -40,7 +25,7 @@ def main():
             print("\nAnswer:", response["answer"])
             print("\nSources:")
             for doc in response["source_documents"]:
-                print(f"- {doc.metadata}")
+                print(f"- {doc}")
                 
         except KeyboardInterrupt:
             break
