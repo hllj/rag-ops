@@ -1,9 +1,12 @@
-import queue
+from abc import ABC, abstractmethod
 
-class IngestionSource:
-    """Base class for ingestion sources."""
-    def start(self, processing_queue: queue.Queue):
-        raise NotImplementedError
+class DataSource(ABC):
+    @abstractmethod
+    def start(self, callback):
+        """Start the data source and feed data to the provided callback."""
+        pass
 
+    @abstractmethod
     def stop(self):
-        raise NotImplementedError
+        """Stop the data source."""
+        pass
