@@ -58,6 +58,7 @@ documents/
 - Minio: Storage.
 - Milvus: Vector Store.
 - LangChain: Data and RAG Orchestration.
+- LlamaParse: Document Parser.
 - FastAPI.
 
 Much more to come, stay tune.
