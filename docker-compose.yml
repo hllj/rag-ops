@@ -79,6 +79,20 @@ services:
     networks:
       - milvus-network
 
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - standalone
+      - etcd
+      - mlflow
+      - minio
+    volumes:
+      - ./data:/app/data
+
 networks:
   milvus-network:
     name: milvus-network
