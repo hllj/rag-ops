@@ -1,2 +1,2 @@
-from .base import DataSource
-from .source_folder import FolderWatcherDataSource
+from .base import SourceHandler
+from .source_folder import FolderWatchHandler
