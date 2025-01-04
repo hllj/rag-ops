@@ -58,7 +58,18 @@ documents/
 - Minio: Storage.
 - Milvus: Vector Store.
 - LangChain: Data and RAG Orchestration.
+- Ragas: RAG Evaluation.
 - LlamaParse: Document Parser.
 - FastAPI.
 
 Much more to come, stay tune.
+
+## To-do List
+
+- MLFlow + Ragas: track all experiment metadata (e.g, hyperparams, embedding, RAG pipeline configuration, ...), show evaluation score.
+- Version Control: Data, RAG chain.
+- Automation and CI/CD pipelines.
+- Monitor and Logging.
+- Feedback Loops for Continuous Improvement.
+- Explaninablity and Interpretability
+- Dashboard
