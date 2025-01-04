@@ -1,12 +1,16 @@
+import yaml
+import logging
+from typing import List, Dict
+
 from langchain_openai import ChatOpenAI
 from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 import langchain.chat_models
 import langchain.chat_models.openai
 from langchain.memory import ConversationBufferMemory
+
 from .prompt_templates import QA_PROMPT, CONDENSE_QUESTION_PROMPT
 from .retrievers import DocumentRetriever
-import yaml
-import logging
+from ..evaluation.rag_evaluation import RAGEvaluator
 
 class RAGChain:
     def __init__(self, config_path: str):
@@ -24,6 +28,7 @@ class RAGChain:
         
         # Create the chain
         self.chain = self._create_chain()
+        self.evaluator = RAGEvaluator()
         
     def _initialize_llm(self):
         """Initialize the language model based on configuration."""
@@ -64,4 +69,40 @@ class RAGChain:
             }
         except Exception as e:
             logging.error(f"Error processing query: {str(e)}")
+            raise
+    
+    def evaluate(self, questions: List[str]) -> Dict:
+        """
+        Evaluate RAG pipeline performance using Ragas metrics.
+        
+        Args:
+            questions: List of questions to evaluate
+            
+        Returns:
+            Dict containing evaluation scores
+        """
+        try:
+            # Get responses for all questions
+            answers = []
+            contexts = []
+            
+            for question in questions:
+                response = self.query(question)
+                answers.append(response["answer"])
+                
+                # Extract context texts from source documents
+                question_contexts = [doc.page_content for doc in response["source_documents"]]
+                contexts.append(question_contexts)
+                
+            # Run evaluation
+            scores = self.evaluator.evaluate(
+                questions=questions,
+                contexts=contexts,
+                answers=answers
+            )
+            
+            return scores
+            
+        except Exception as e:
+            logging.error(f"Error during RAG evaluation: {str(e)}")
             raise
