@@ -77,7 +77,8 @@ class RAGChain:
             source_documents = response.get("source_documents", [])
             return {
                 "answer": answer,
-                "source_documents": source_documents
+                "source_documents": source_documents,
+                "chat_history": self.chat_history
             }
         except Exception as e:
             logging.error(f"Error processing query: {str(e)}")

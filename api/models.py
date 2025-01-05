@@ -12,6 +12,7 @@ class SourceDocument(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
     source_documents: List[SourceDocument]
+    chat_history: List[Dict[str, str]]
 
 class HealthResponse(BaseModel):
     status: str

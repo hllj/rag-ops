@@ -4,6 +4,10 @@ from langchain.embeddings import HuggingFaceEmbeddings
 import yaml
 import logging
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 class DocumentRetriever:
     def __init__(self, config_path: str):
         with open(config_path, 'r') as f:

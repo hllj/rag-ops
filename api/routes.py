@@ -27,7 +27,8 @@ async def query_rag(
                     "metadata": doc.metadata
                 }
                 for doc in response["source_documents"]
-            ]
+            ],
+            "chat_history": response["chat_history"]
         }
     except Exception as e:
         logger.error(f"Error processing query: {str(e)}")
