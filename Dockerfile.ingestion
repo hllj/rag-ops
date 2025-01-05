@@ -1,0 +1,31 @@
+# Use Python 3.11 slim image as base
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies required for Python packages
+RUN apt-get update && apt-get install -y \
+    gcc \
+    python3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements file
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY src/ src/
+COPY config/ config/
+COPY start_ingestion.py .
+
+# Create directory for documents
+RUN mkdir -p documents/processed documents/error
+
+# Set environment variables
+ENV PYTHONUNBUFFERED=1
+
+# Command to run the ingestion service
+CMD ["python", "start_ingestion.py"]

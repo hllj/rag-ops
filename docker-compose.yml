@@ -79,8 +79,29 @@ services:
     networks:
       - milvus-network
 
+  ingestion:
+    build:
+      context: .
+      dockerfile: Dockerfile.ingestion
+    container_name: rag-ingestion
+    volumes:
+      - ./documents:/app/documents
+      - .env:/app/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+    networks:
+      - rag-network
+    restart: unless-stopped
+    depends_on:
+      - standalone
+      - etcd
+      - mlflow
+      - minio
+
   api:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.app
     ports:
       - "8000:8000"
     environment:
@@ -96,3 +117,6 @@ services:
 networks:
   milvus-network:
     name: milvus-network
+  rag-network:
+    name: rag-network
+    driver: bridge
