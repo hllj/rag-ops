@@ -45,7 +45,15 @@ documents/
 └───error/: error files
 ```
 
+Examples: Copy some documents from folder /examples/examples_document to test
+
+```bash
+cp examples/examples_document/* documents/
+```
+
 6. Check processed documents in MLFlow experiment
+
+![MLFlow for processing data](./assets/images/mlflow_processing_data.png)
 
 7. Use API to query RAG
 
