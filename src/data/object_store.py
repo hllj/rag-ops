@@ -10,7 +10,7 @@ class ObjectStore:
             self.config = yaml.safe_load(f)
         
         self.client = Minio(
-            endpoint=self.config['minio']['endpoint'],
+            endpoint=os.environ["MINIO_ADDRESS"],
             access_key=self.config['minio']['access_key'],
             secret_key=self.config['minio']['secret_key'],
             secure=self.config['minio']['secure']
@@ -18,6 +18,7 @@ class ObjectStore:
         
         self.bucket_name = self.config['minio']['bucket_name']
         self._ensure_bucket_exists()
+        logging.info("Connect to Minio")
         
     def _ensure_bucket_exists(self):
         """Create bucket if it doesn't exist."""

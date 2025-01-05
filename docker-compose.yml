@@ -13,7 +13,7 @@ services:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/etcd:/etcd
     command: etcd -advertise-client-urls=http://127.0.0.1:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     networks:
-      - milvus-network
+      - app-network
 
   minio:
     container_name: minio-server
@@ -33,7 +33,7 @@ services:
       timeout: 20s
       retries: 3
     networks:
-      - milvus-network
+      - app-network
 
   standalone:
     container_name: milvus-standalone
@@ -51,7 +51,7 @@ services:
       - "etcd"
       - "minio"
     networks:
-      - milvus-network
+      - app-network
 
   mlflow:
     container_name: mlflow-server
@@ -77,7 +77,7 @@ services:
     depends_on:
       - "minio"
     networks:
-      - milvus-network
+      - app-network
 
   ingestion:
     build:
@@ -88,9 +88,13 @@ services:
       - ./documents:/app/documents
       - .env:/app/.env
     environment:
+      - MILVUS_HOST=standalone
+      - MILVUS_PORT=19530
+      - MINIO_ADDRESS=minio:9000
+      - MLFLOW_TRACKING_URI=http://mlflow:3500
       - PYTHONUNBUFFERED=1
     networks:
-      - rag-network
+      - app-network
     restart: unless-stopped
     depends_on:
       - standalone
@@ -111,12 +115,11 @@ services:
       - etcd
       - mlflow
       - minio
+    networks:
+      - app-network
     volumes:
       - ./data:/app/data
 
 networks:
-  milvus-network:
-    name: milvus-network
-  rag-network:
-    name: rag-network
-    driver: bridge
+  app-network:
+    name: app-network

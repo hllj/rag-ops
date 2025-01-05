@@ -1,7 +1,5 @@
 vector_store:
   type: "milvus"
-  host: "localhost"
-  port: 19530
   collection_name: "documents"
 
 embedding_model:
@@ -35,11 +33,9 @@ monitoring:
   metrics_port: 8000
 
 mlflow:
-  tracking_uri: "http://localhost:3500"
   experiment_name: "rag-document-processing"
 
 minio:
-  endpoint: "localhost:9000"
   access_key: "minioadmin"
   secret_key: "minioadmin"
   bucket_name: "documents"

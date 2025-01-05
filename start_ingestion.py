@@ -18,6 +18,8 @@ if __name__ == "__main__":
     folder_handler = FolderSourceHandler(pipeline.config, "documents/")
     pipeline.add_source_handler("folder", folder_handler)
     
+    logging.info("Start ingestion!")
+    
     try:
         pipeline.run()
     except KeyboardInterrupt:

@@ -1,5 +1,4 @@
 import logging
-from src.pipeline.ingestion_pipeline import DocumentIngestionPipeline
 from src.rag.chain import RAGChain
 from src.monitoring.metrics import start_http_server
 import yaml

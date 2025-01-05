@@ -1,3 +1,4 @@
+import os
 import yaml
 from typing import List, Dict
 from pymilvus import connections, Collection, FieldSchema, CollectionSchema, DataType, utility
@@ -10,13 +11,14 @@ class VectorStore:
             
         self.collection_name = self.config['vector_store']['collection_name']
         self._connect()
+        logging.info(f"Connected to Milvus")
         self._initialize_collection()
         
     def _connect(self):
         """Connect to vector database."""
         connections.connect(
-            host=self.config['vector_store']['host'],
-            port=self.config['vector_store']['port']
+            host=os.environ["MILVUS_HOST"],
+            port=os.environ["MILVUS_PORT"]
         )
         
     def _initialize_collection(self):
