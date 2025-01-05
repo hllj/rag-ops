@@ -32,13 +32,7 @@ Start MLFlow, Milvus, Minio, API endpoint
 docker compose up -d
 ```
 
-5. Start Data Ingestion
-
-We only support Folder watcher to update documents in pdf files.
-
-```bash
-python start_ingestion.py
-```
+5. Manually uploading new documents
 
 Upload pdf files in documents/ folder
 
@@ -51,6 +45,22 @@ documents/
 └───error/: error files
 ```
 
+6. Check processed documents in MLFlow experiment
+
+7. Use API to query RAG
+
+Accessing API /api/v1/query.
+
+```bash
+curl -X 'POST' \
+  'http://localhost:8000/api/v1/query' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "question": "What is the role of Jensen'\''s inequality ?",
+  "chat_history": []
+}'
+```
 
 ## Stack
 

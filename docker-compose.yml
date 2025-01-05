@@ -110,6 +110,8 @@ services:
       - "8000:8000"
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - MILVUS_HOST=standalone
+      - MILVUS_PORT=19530
     depends_on:
       - standalone
       - etcd

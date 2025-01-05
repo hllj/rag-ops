@@ -2,6 +2,7 @@ import yaml
 import logging
 from typing import List, Dict
 
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI
 from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 import langchain.chat_models
@@ -52,6 +53,18 @@ class RAGChain:
             verbose=self.config['rag']['chain']['verbose']
         )
         
+    @property
+    def chat_history(self) -> List[Dict[str, str]]:
+        """Convert chat memory to list of messages."""
+        messages = self.memory.chat_memory.messages
+        return [
+            {
+                "role": "user" if isinstance(msg, HumanMessage) else "assistant",
+                "content": msg.content
+            }
+            for msg in messages
+        ]
+        
     def query(self, question: str, chat_history=None):
         """Process a question through the RAG chain."""
         if chat_history is None:
@@ -64,8 +77,7 @@ class RAGChain:
             source_documents = response.get("source_documents", [])
             return {
                 "answer": answer,
-                "source_documents": source_documents,
-                "chat_history": self.memory.chat_memory.messages
+                "source_documents": source_documents
             }
         except Exception as e:
             logging.error(f"Error processing query: {str(e)}")

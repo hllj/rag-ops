@@ -1,3 +1,4 @@
+import os
 from langchain.vectorstores import Milvus
 from langchain.embeddings import HuggingFaceEmbeddings
 import yaml
@@ -18,8 +19,8 @@ class DocumentRetriever:
             embedding_function=self.embeddings,
             collection_name=self.config['vector_store']['collection_name'],
             connection_args={
-                "host": self.config['vector_store']['host'],
-                "port": self.config['vector_store']['port']
+                "host": os.environ["MILVUS_HOST"],
+                "port": os.environ["MILVUS_PORT"]
             },
             primary_field="id",
             text_field="content",
