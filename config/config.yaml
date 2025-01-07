@@ -34,6 +34,11 @@ monitoring:
 
 mlflow:
   experiment_name: "rag-document-processing"
+  model_registry:
+    model_name: "rag-production-model"
+    metric_thresholds:
+      answer_relevancy: 0.8
+      faithfulness: 0.8
 
 minio:
   access_key: "minioadmin"

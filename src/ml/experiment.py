@@ -65,3 +65,48 @@ class ExperimentManager:
     def log_model(self, model, artifact_path: str):
         """Log a model to MLflow."""
         mlflow.sklearn.log_model(model, artifact_path)
+        
+    def register_model(self, model_name: str, run_id: str = None) -> str:
+        """
+        Register a model in MLflow Model Registry.
+        
+        Args:
+            model_name: Name of the model in registry
+            run_id: MLflow run ID containing the model
+            
+        Returns:
+            Version number of the registered model
+        """
+        try:
+            # Get latest run if run_id not provided
+            if run_id is None:
+                run_id = mlflow.active_run().info.run_id
+                
+            # Register model from run artifacts
+            result = mlflow.register_model(
+                model_uri=f"runs:/{run_id}/model",
+                name=model_name
+            )
+            
+            logging.info(f"Model {model_name} registered with version {result.version}")
+            return result.version
+            
+        except Exception as e:
+            logging.error(f"Failed to register model: {str(e)}")
+            raise
+            
+    def transition_model_stage(self, model_name: str, version: int, stage: str):
+        """
+        Transition a model version to a new stage.
+        
+        Args:
+            model_name: Name of the registered model
+            version: Version number to transition
+            stage: Target stage (None, Staging, Production, Archived)
+        """
+        client = mlflow.tracking.MlflowClient()
+        client.transition_model_version_stage(
+            name=model_name,
+            version=version,
+            stage=stage
+        )
