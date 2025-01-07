@@ -18,7 +18,7 @@ def main():
         
     questions = [sample["questions"] for sample in validation_set]
     
-    rag_chain.evaluate(questions)
+    scores = rag_chain.evaluate(questions)
 
 if __name__ == "__main__":
     main()

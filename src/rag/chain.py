@@ -60,3 +60,46 @@ class RAGChain:
         except Exception as e:
             logging.error(f"Error processing query: {str(e)}")
             raise
+        
+    def evaluate(self, questions: List[str]) -> Dict:
+        """
+        Evaluate the RAG chain performance using Ragas metrics.
+        
+        Args:
+            questions: List of questions to evaluate
+            
+        Returns:
+            Dict containing evaluation scores from Ragas
+        """
+        answers = []
+        contexts = []
+        
+        # Process each question through the RAG chain
+        for question in questions:
+            try:
+                response = self.query(question)
+                answers.append(response["answer"])
+                
+                # Extract context texts from source documents
+                question_contexts = [
+                    doc.page_content 
+                    for doc in response["source_documents"]
+                ]
+                contexts.append(question_contexts)
+                
+            except Exception as e:
+                logging.error(f"Error processing question '{question}': {str(e)}")
+                raise
+
+        # Run evaluation using RAGEvaluator
+        try:
+            scores = self.evaluator.evaluate(
+                questions=questions,
+                contexts=contexts, 
+                answers=answers
+            )
+            return scores
+            
+        except Exception as e:
+            logging.error(f"Evaluation failed: {str(e)}")
+            raise
