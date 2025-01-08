@@ -17,3 +17,4 @@ langchain-community
 llama-parse
 python-dotenv
 ragas>=0.0.22
+apache-airflow
