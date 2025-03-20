@@ -102,30 +102,93 @@ services:
       - mlflow
       - minio
 
-  airflow-scheduler:
-    image: apache/airflow:2.7.3
+  airflow-init:
+    image: apache/airflow:2.7.3-python3.11
+    entrypoint: /bin/bash
+    command: -c "
+      pip install -r /opt/airflow/requirements.txt &&
+      airflow db migrate &&
+      airflow users create \
+        --username admin \
+        --password admin \
+        --firstname Admin \
+        --lastname Admin \
+        --role Admin \
+        --email admin@example.com &&
+      airflow connections add 'postgres_default' \
+        --conn-type 'postgres' \
+        --conn-login 'airflow' \
+        --conn-password 'airflow' \
+        --conn-host 'postgres' \
+        --conn-port '5432' \
+        --conn-schema 'airflow'"
     depends_on:
-      - airflow-webserver
+      postgres:
+        condition: service_healthy
     environment:
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+      - AIRFLOW__WEBSERVER__SECRET_KEY=${AIRFLOW_SECRET_KEY}
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=false
+    user: "${AIRFLOW_UID}:${AIRFLOW_GID}"
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./config:/opt/airflow/config
+      - ./requirements.txt:/opt/airflow/requirements.txt
     networks:
       - app-network
 
   airflow-webserver:
-    image: apache/airflow:2.7.3
+    image: apache/airflow:2.7.3-python3.11
+    command: bash -c "pip install -r /opt/airflow/requirements.txt && airflow webserver"
     ports:
       - "8080:8080"
+    depends_on:
+      - postgres
+      - airflow-init
     environment:
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
-      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__WEBSERVER__SECRET_KEY=your-secret-key-here
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+      - AIRFLOW__WEBSERVER__SECRET_KEY=${AIRFLOW_SECRET_KEY}
     volumes:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./src:/opt/airflow/src
+      - ./config:/opt/airflow/config
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    user: "${AIRFLOW_UID}:${AIRFLOW_GID}"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - app-network
+
+  airflow-scheduler:
+    image: apache/airflow:2.7.3-python3.11
+    command: bash -c "pip install -r /opt/airflow/requirements.txt && airflow scheduler"
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./src:/opt/airflow/src
+      - ./config:/opt/airflow/config
+      - ./requirements.txt:/opt/airflow/requirements.txt
+    user: "${AIRFLOW_UID}:${AIRFLOW_GID}"
     networks:
       - app-network
 
@@ -137,6 +200,11 @@ services:
       - POSTGRES_DB=airflow
     volumes:
       - postgres-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - app-network
 

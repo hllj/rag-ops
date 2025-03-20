@@ -5,7 +5,7 @@ watchdog>=3.0.0
 prometheus-client>=0.17.1
 torch>=2.0.0
 transformers>=4.30.0
-mlflow==2.19.0
+mlflow
 minio>=7.1.15
 langchain>=0.0.200
 openai>=0.27.0
@@ -17,3 +17,4 @@ langchain-community
 llama-parse
 python-dotenv
 ragas>=0.0.22
+apache-airflow

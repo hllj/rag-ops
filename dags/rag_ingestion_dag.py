@@ -4,7 +4,9 @@ from datetime import datetime, timedelta
 import sys
 import os
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add project root to Python path properly
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, PROJECT_ROOT)
 
 from src.pipeline.document_ingestion_pipeline import DocumentIngestionPipeline
 from src.pipeline.sources.source_folder import FolderSourceHandler
@@ -20,8 +22,11 @@ default_args = {
 }
 
 def run_ingestion():
-    pipeline = DocumentIngestionPipeline('config/config.yaml')
-    folder_handler = FolderSourceHandler(pipeline.config, "documents/")
+    config_path = os.path.join(PROJECT_ROOT, 'config/config.yaml')
+    documents_path = os.path.join(PROJECT_ROOT, 'documents')
+    
+    pipeline = DocumentIngestionPipeline(config_path)
+    folder_handler = FolderSourceHandler(pipeline.config, documents_path)
     pipeline.add_source_handler("folder", folder_handler)
     pipeline.run()
 
