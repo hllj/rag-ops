@@ -1,5 +1,5 @@
 import os
-from langchain.vectorstores import Milvus
+from langchain_community.vectorstores import Milvus
 from langchain.embeddings import HuggingFaceEmbeddings
 import yaml
 import logging
