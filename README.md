@@ -4,7 +4,31 @@ We help you to deploy RAG with changing in datasources.
 
 Note: Everything are under-construction and experimental!
 
-## Start application
+## Getting Started
+
+### Prerequisites
+
+- Python 3.11+
+- Docker and Docker Compose
+- OpenAI API key
+- LlamaParse API key (for document parsing)
+
+### Environment Setup
+
+1. Create a `.env` file based on the `.env.example`:
+
+```bash
+cp .env.example .env
+```
+
+2. Add your API keys to the `.env` file:
+
+```txt
+OPENAI_API_KEY=your-openai-api-key
+LLAMA_PARSE_API=your-llama-parse-api-key
+```
+
+### Start application
 
 1. Clone the project
 
@@ -68,6 +92,26 @@ curl -X 'POST' \
   "question": "What is the role of Jensen'\''s inequality ?",
   "chat_history": []
 }'
+```
+
+## Directory Structure
+
+```txt
+rag-ops/
+├── api/                # FastAPI application
+├── config/             # Configuration files
+├── dags/               # Airflow DAGs
+├── datasets/           # Validation datasets
+├── documents/          # Document storage
+├── src/                # Source code
+│   ├── data/           # Data handling components
+│   ├── evaluation/     # Evaluation components
+│   ├── ml/             # ML experiment tracking
+│   ├── monitoring/     # Monitoring components
+│   ├── pipeline/       # Ingestion pipeline
+│   ├── rag/            # RAG components
+│   └── utils/          # Utility functions
+└── tests/              # Unit tests
 ```
 
 ## Diagram
@@ -163,7 +207,7 @@ This architecture follows MLOps principles with:
 - Experiment tracking
 - Infrastructure as code
 
-## Stack
+## Tech Stack
 
 - MLFlow: Experiments management.
 - Minio: Storage.
@@ -171,16 +215,84 @@ This architecture follows MLOps principles with:
 - LangChain: Data and RAG Orchestration.
 - Ragas: RAG Evaluation.
 - LlamaParse: Document Parser.
-- FastAPI.
+- FastAPI: API development framework.
+- Ragas: RAG evaluation framework.
+- Sentence Transformers: Embedding models.
+- Prometheus: Metrics collection.
+- Airflow: Workflow orchestration.
+- Docker: Containerization.
 
-Much more to come, stay tune.
+## Developer Guide
+
+### Adding New Document Sources
+To add a new document source:
+
+1. Create a new source handler class in `src/pipeline/sources/`
+2. Extend the `SourceHandler` base class
+3. Implement the required methods
+4. Register the source handler in `DocumentIngestionPipeline`
+
+### Customizing the RAG Chain
+To customize the RAG chain:
+
+1. Modify the prompt templates in `src/rag/prompt_templates.py`
+2. Update retriever configurations in `config/config.yaml`
+3. Extend the `RAGChain` class for additional functionality
 
 ## To-do List
 
-- MLFlow + Ragas: track all experiment metadata (e.g, hyperparams, embedding, RAG pipeline configuration, ...), show evaluation score.
-- Version Control: Data, RAG chain.
-- Automation and CI/CD pipelines.
-- Monitor and Logging.
-- Feedback Loops for Continuous Improvement.
-- Explaninablity and Interpretability
-- Dashboard
+### Completed ✅
+- [x] Data Processing and RAG pipeline
+  - [x] Document ingestion pipeline
+  - [x] Vector store integration
+  - [x] RAG chain implementation
+  - [x] API endpoints
+- [x] MLFlow Integration
+  - [x] Experiment tracking
+  - [x] Model registry
+  - [x] Configuration versioning
+  - [x] Evaluation metrics logging
+- [x] Evaluation Framework
+  - [x] Ragas metrics integration
+  - [x] Automated evaluation pipeline
+  - [x] Performance benchmarking
+- [x] Infrastructure
+  - [x] Docker containerization
+  - [x] Milvus vector store setup
+  - [x] MinIO object storage
+  - [x] FastAPI service
+- [x] Orchestration
+  - [x] Airflow DAGs implementation
+  - [x] Document processing automation
+  - [x] Evaluation scheduling
+
+### In Progress 🚧
+- [ ] Automation and CI/CD pipelines
+  - [ ] GitHub Actions workflows
+  - [ ] Automated testing
+  - [ ] Deployment automation
+- [ ] Version Control
+  - [ ] Data versioning
+  - [ ] Model versioning
+  - [ ] Configuration management
+  - [ ] Embedding version control
+
+### Planned 📋
+- [ ] Monitoring and Logging
+  - [ ] Prometheus metrics
+  - [ ] Grafana dashboards
+  - [ ] Performance monitoring
+  - [ ] Cost tracking
+- [ ] Feedback Loops
+  - [ ] User feedback collection
+  - [ ] Performance analysis
+  - [ ] Model improvements
+- [ ] Explainability
+  - [ ] Answer source tracking
+  - [ ] Confidence scores
+  - [ ] Retrieval visualization
+- [ ] Dashboard
+  - [ ] Performance metrics
+  - [ ] System monitoring
+  - [ ] User analytics
+  - [ ] Document management
